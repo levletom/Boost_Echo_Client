@@ -183,7 +183,7 @@ std::string TaskWriteToStdOUTReadFromSocket::createAndProcessAckString() {
                 result = "ACK 8 "+to_string(numPosts)+" "+to_string(numFollowers)+" "+to_string(numFollowing);
                 return result;
             default:
-                return "unexpected Error - recieved ack message without proper message operator";
+                return "unexpected Error - recieved ack message without proper message operator 1-8";
 
 
         }
