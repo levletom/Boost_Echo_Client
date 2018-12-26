@@ -1,5 +1,10 @@
 #include <stdlib.h>
 #include "../include/connectionHandler.h"
+#include <mutex>
+#include <iostream>
+#include <thread>
+#include "TaskReadFromSTDINWriteToSocket.h"
+#include "TaskWriteToStdOUTReadFromSocket.h"
 
 /**
 * This code assumes that the server replies the exact text the client sent it (as opposed to the practical session example)
@@ -17,7 +22,22 @@ int main (int argc, char *argv[]) {
         std::cerr << "Cannot connect to " << host << ":" << port << std::endl;
         return 1;
     }
-	
+
+    //Implementation using 2 threads
+    std::mutex mutex;
+    //TaskReadFromSTDINWriteToSocket task1(1,connectionHandler, mutex);
+  //  TaskWriteToStdOUTReadFromSocket task2(2,connectionHandler, mutex);
+
+   // std::thread th1(&TaskReadFromSTDINWriteToSocket::run, &task1);
+   // std::thread th2(&TaskWriteToStdOUTReadFromSocket::run, &task2);
+   // th1.join();
+  //  th2.join();
+ //   return 0;
+
+
+
+
+
 	//From here we will see the rest of the ehco client implementation:
     while (1) {
         const short bufsize = 1024;
@@ -57,3 +77,7 @@ int main (int argc, char *argv[]) {
     }
     return 0;
 }
+
+
+
+
