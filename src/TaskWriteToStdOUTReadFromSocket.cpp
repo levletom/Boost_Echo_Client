@@ -2,12 +2,13 @@
 // Created by amitk on 12/26/18.
 //
 
-#include <TaskWrite.h>
+
 #include <iostream>
+#include <connectionHandler.h>
 
-#include "TaskWrite.h"
+#include "../include/TaskWriteToStdOUTReadFromSocket.h"
 
-TaskWrite::TaskWrite(int id, std::mutex &mutex):_id(id), _mutex(mutex) {}
+TaskWrite::TaskWrite(int id, std::mutex &mutex,ConnectionHandler & connectionHandler):_id(id), _mutex(mutex),_connectionHandler(connectionHandler) {}
 
 
 

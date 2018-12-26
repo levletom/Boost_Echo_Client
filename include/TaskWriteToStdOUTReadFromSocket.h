@@ -12,8 +12,9 @@ class TaskWrite {
 private:
     int _id;
     std::mutex &_mutex;
+    ConnectionHandler & _connectionHandler;
 public:
-    TaskWrite(int id, std::mutex &mutex);
+    TaskWrite(int id, std::mutex &mutex, ConnnectionHandler & connnectionHandler);
 
     void run();
 };
