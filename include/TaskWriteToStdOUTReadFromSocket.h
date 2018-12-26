@@ -8,12 +8,12 @@
 
 #include <mutex>
 
-class TaskWrite {
+class TaskWriteToStdOUTReadFromSocket {
 private:
     int _id;
     std::mutex &_mutex;
 public:
-    TaskWrite(int id, std::mutex &mutex);
+    TaskWriteToStdOUTReadFromSocket(int id, std::mutex &mutex);
 
     void run();
 };

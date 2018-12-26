@@ -6,13 +6,15 @@
 #define BOOST_ECHO_CLIENT_TASKREAD_H
 
 #include <mutex>
+#include <../include/connectionHandler.h>
 
-class TaskRead{
+class TaskReadFromSTDINWriteToSocket{
 private:
     int _id;
     std::mutex & _mutex;
+    ConnectionHandler & _connectionHandler;
 public:
-    TaskRead (int id, std::mutex& mutex);
+    TaskReadFromSTDINWriteToSocket (int id, std::mutex& mutex,ConnectionHandler& connectionHandler);
 
     void run();
 
