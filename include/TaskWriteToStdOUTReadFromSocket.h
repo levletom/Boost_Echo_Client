@@ -4,19 +4,30 @@
 
 #ifndef BOOST_ECHO_CLIENT_TASKWRITE_H
 #define BOOST_ECHO_CLIENT_TASKWRITE_H
-
+#include <../include/connectionHandler.h>
 
 #include <mutex>
 
-class TaskWrite {
+class TaskWriteToStdOUTReadFromSocket {
 private:
     int _id;
     std::mutex &_mutex;
     ConnectionHandler & _connectionHandler;
 public:
-    TaskWrite(int id, std::mutex &mutex, ConnnectionHandler & connnectionHandler);
+    TaskWriteToStdOUTReadFromSocket(int id, std::mutex& mutex,ConnectionHandler& connectionHandler);
 
     void run();
+
+    bool terminate;
+
+    std::string getNextProccessedMessage();
+    short bytesToShort(char* bytesArr);
+
+    std::string createAndProcessNotificationString();
+
+    std::string createAndProcessAckString();
+
+    std::string createAndProccessErrorString();
 };
 
 
