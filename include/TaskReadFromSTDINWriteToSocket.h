@@ -7,6 +7,8 @@
 
 #include <mutex>
 #include <../include/connectionHandler.h>
+#include <vector>
+using namespace std;
 
 class TaskReadFromSTDINWriteToSocket{
 private:
@@ -17,8 +19,9 @@ public:
     TaskReadFromSTDINWriteToSocket (int id, std::mutex& mutex,ConnectionHandler& connectionHandler);
 
     void run();
-
-
+    void shortToBytes(short num, char* bytesArr);
+    vector<string> explode(const string& str, const char& ch);
+    int stringToInt(string s);
 };
 
 #endif //BOOST_ECHO_CLIENT_TASKREAD_H
