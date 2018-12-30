@@ -20,14 +20,14 @@ public:
 
     bool terminate;
 
-    std::string getNextProccessedMessage();
+    std::string* getNextProccessedMessage();
     short bytesToShort(char* bytesArr);
 
-    std::string createAndProcessNotificationString();
+    std::string *createAndProcessNotificationString();
 
-    std::string createAndProcessAckString();
+    std::string *createAndProcessAckString();
 
-    std::string createAndProccessErrorString();
+    std::string *createAndProccessErrorString();
 };
 
 

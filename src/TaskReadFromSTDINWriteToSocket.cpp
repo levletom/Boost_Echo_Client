@@ -46,9 +46,9 @@ void TaskReadFromSTDINWriteToSocket::run() {
         else if(toStrings.front()=="FOLLOW"){
             shortToBytes(4,opCodeBytes);
             _connectionHandler.sendBytes(opCodeBytes,2);
-            _connectionHandler.sendFrameAscii(toStrings.at(1),' ');
-            _connectionHandler.sendFrameAscii(toStrings.at(2),' ');
-            int numOfUsers = std::stoi( toStrings.at(2) );
+            _connectionHandler.sendBytes(toStrings.at(1).c_str(),1);
+            _connectionHandler.sendFrameAscii(toStrings.at(2).c_str(),toStrings.at(2).size());
+            int numOfUsers = std::stoi(toStrings.at(2));
             for(int i=0;i<numOfUsers;i++){
                 _connectionHandler.sendFrameAscii(toStrings.at(i+3),'\0');
             }
@@ -56,13 +56,23 @@ void TaskReadFromSTDINWriteToSocket::run() {
         else if(toStrings.front()=="POST"){
             shortToBytes(5,opCodeBytes);
             _connectionHandler.sendBytes(opCodeBytes,2);
-            _connectionHandler.sendFrameAscii(toStrings.at(1),'\0');
+            if(toStrings.size()>1) {
+                for (int i = 1; i < toStrings.size() - 1; i++) {
+                    _connectionHandler.sendFrameAscii(toStrings.at(i), ' ');
+                }
+                _connectionHandler.sendFrameAscii(toStrings.at(toStrings.size()-1),'\0');
+            }
         }
         else if(toStrings.front()=="PM"){
             shortToBytes(6,opCodeBytes);
             _connectionHandler.sendBytes(opCodeBytes,2);
             _connectionHandler.sendFrameAscii(toStrings.at(1),'\0');
-            _connectionHandler.sendFrameAscii(toStrings.at(2),'\0');
+            if(toStrings.size()>2) {
+                for (int i = 2; i < toStrings.size() - 1; i++) {
+                    _connectionHandler.sendFrameAscii(toStrings.at(i), ' ');
+                }
+                _connectionHandler.sendFrameAscii(toStrings.at(toStrings.size()-1),'\0');
+            }
         }
         else if(toStrings.front()=="USERLIST"){
             shortToBytes(7,opCodeBytes);
@@ -81,11 +91,6 @@ void TaskReadFromSTDINWriteToSocket::run() {
 
 
 
-        int len = line.length();
-        if (!_connectionHandler.sendLine(line)) {
-            std::cout << "Disconnected. Exiting...\n" << std::endl;
-            break;
-        }
     }
 }
 

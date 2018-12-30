@@ -2,6 +2,7 @@
 #include "../include/connectionHandler.h"
 #include <mutex>
 #include <iostream>
+
 #include <thread>
 #include "TaskReadFromSTDINWriteToSocket.h"
 #include "TaskWriteToStdOUTReadFromSocket.h"
@@ -25,14 +26,14 @@ int main (int argc, char *argv[]) {
 
     //Implementation using 2 threads
     std::mutex mutex;
-    //TaskReadFromSTDINWriteToSocket task1(1,connectionHandler, mutex);
-  //  TaskWriteToStdOUTReadFromSocket task2(2,connectionHandler, mutex);
+    TaskReadFromSTDINWriteToSocket task1(1,mutex,connectionHandler );
+    TaskWriteToStdOUTReadFromSocket task2(2, mutex,connectionHandler );
 
-   // std::thread th1(&TaskReadFromSTDINWriteToSocket::run, &task1);
-   // std::thread th2(&TaskWriteToStdOUTReadFromSocket::run, &task2);
-   // th1.join();
-  //  th2.join();
- //   return 0;
+    std::thread th1(&TaskReadFromSTDINWriteToSocket::run, &task1);
+    std::thread th2(&TaskWriteToStdOUTReadFromSocket::run, &task2);
+   th1.join();
+    th2.join();
+   return 0;
 
 
 

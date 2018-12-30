@@ -25,30 +25,35 @@ void TaskWriteToStdOUTReadFromSocket::run() {
         std::cout << i << ") Task " << _id << " is working" << std::endl;
     }*/
     while (!terminate) {
-        string messageToPrint = getNextProccessedMessage();
-        cout << messageToPrint << endl;
+        string  *messageToPrint = getNextProccessedMessage();
+        if(messageToPrint != nullptr) {
+            cout << *messageToPrint << endl;
+            delete messageToPrint;
+        }
+
     }
 }
 
-std::string TaskWriteToStdOUTReadFromSocket::getNextProccessedMessage() {
+std::string* TaskWriteToStdOUTReadFromSocket::getNextProccessedMessage() {
     char *bytes = new char[2];
     short opcode = -1;
     bool success = _connectionHandler.getBytes(bytes, 2);
-    if (success)
+    if (success) {
         opcode = bytesToShort(bytes);
-    switch (opcode) {
-        case 9  :
-            return createAndProcessNotificationString();
+        switch (opcode) {
+            case 9  :
+                return createAndProcessNotificationString();
+            case 10  :
+                return createAndProcessAckString();
+            case 11:
+                return createAndProccessErrorString();
 
-        case 10  :
-            return createAndProcessAckString();
-        case 11:
-            return createAndProccessErrorString();
 
-
-        default :
-            return "Unexpected Error Reading Reacieved Opcode";
+            default :
+                return new string("Unexpected Error Reading Reacieved Opcode");
+        }
     }
+    return nullptr;
 
 
 }
@@ -59,7 +64,7 @@ short TaskWriteToStdOUTReadFromSocket::bytesToShort(char *bytesArr) {
     return result;
 }
 
-std::string TaskWriteToStdOUTReadFromSocket::createAndProcessNotificationString() {
+std::string* TaskWriteToStdOUTReadFromSocket::createAndProcessNotificationString() {
     char *pmOrPost = new char[1];
     bool success = _connectionHandler.getBytes(pmOrPost, 1);
     if (success) {
@@ -85,13 +90,13 @@ std::string TaskWriteToStdOUTReadFromSocket::createAndProcessNotificationString(
         else
             cout << "unexpected error when deciding if PM or POST" << endl;
 
-        return "NOTIFICATION " + pmOrPostString + postingUser + " " + content;
+        return new string("NOTIFICATION " + pmOrPostString + postingUser + " " + content);
 
 
     }
 }
 
-std::string TaskWriteToStdOUTReadFromSocket::createAndProcessAckString() {
+std::string* TaskWriteToStdOUTReadFromSocket::createAndProcessAckString() {
     char *bytes = new char[2];
     short messageOpcode = -1;
     bool success = _connectionHandler.getBytes(bytes, 2);
@@ -107,20 +112,20 @@ std::string TaskWriteToStdOUTReadFromSocket::createAndProcessAckString() {
         switch (messageOpcode) {
             //register
             case 1  :
-                return "ACK 1";
+                return new string("ACK 1");
                 //login
             case 2:
-                return "ACK 2";
+                return new string("ACK 2");
                 //logout
             case 3:
                 terminate = true;
-                return "ACK 3";
+                return new string("ACK 3");
                 //follow/unfollow
             case 4:
 
 
                 if (!_connectionHandler.getBytes(numOfUsersbytes, 2))
-                    return "unexpected error when reading numOfUsers";
+                    return new string("unexpected error when reading numOfUsers");
 
                 numOfUsers = bytesToShort(numOfUsersbytes);
 
@@ -137,17 +142,17 @@ std::string TaskWriteToStdOUTReadFromSocket::createAndProcessAckString() {
                 for (string name:users) {
                     result += " " + name;
                 }
-                return result;
+                return new string(result);
                 //POST
             case 5:
-                return "ACK 5";
+                return new string("ACK 5");
                 //PM
             case 6:
-                return "ACK 6";
+                return new string("ACK 6");
                 //UserList
             case 7:
                 if (!_connectionHandler.getBytes(numOfUsersbytes, 2))
-                    return "unexpected error when reading numOfUsers";
+                    return new string("unexpected error when reading numOfUsers");
 
                 numOfUsers = bytesToShort(numOfUsersbytes);
 
@@ -164,26 +169,26 @@ std::string TaskWriteToStdOUTReadFromSocket::createAndProcessAckString() {
                 for (string name:users) {
                     result += " " + name;
                 }
-                return result;
+                return new string(result);
             case 8:
                 if (!_connectionHandler.getBytes(numOfUsersbytes, 2))
-                    return "unexpected error when reading numOfPosts";
+                    return new string("unexpected error when reading numOfPosts");
 
                 numPosts = bytesToShort(numOfUsersbytes);
 
                 if (!_connectionHandler.getBytes(numOfUsersbytes, 2))
-                    return "unexpected error when reading numOfFollowers";
+                    return new string("unexpected error when reading numOfFollowers");
 
                 numFollowers = bytesToShort(numOfUsersbytes);
 
                 if (!_connectionHandler.getBytes(numOfUsersbytes, 2))
-                    return "unexpected error when reading numFollowing";
+                    return new string("unexpected error when reading numFollowing");
 
                 numFollowing = bytesToShort(numOfUsersbytes);
                 result = "ACK 8 "+to_string(numPosts)+" "+to_string(numFollowers)+" "+to_string(numFollowing);
-                return result;
+                return new string(result);
             default:
-                return "unexpected Error - recieved ack message without proper message operator 1-8";
+                return new string("unexpected Error - recieved ack message without proper message operator 1-8");
 
 
         }
@@ -192,15 +197,15 @@ std::string TaskWriteToStdOUTReadFromSocket::createAndProcessAckString() {
 
 }
 
-std::string TaskWriteToStdOUTReadFromSocket::createAndProccessErrorString() {
+std::string* TaskWriteToStdOUTReadFromSocket::createAndProccessErrorString() {
     char *bytes = new char[2];
     short messageOpcode = -1;
     bool success = _connectionHandler.getBytes(bytes, 2);
     if (success) {
         messageOpcode = bytesToShort(bytes);
-        return "Error " + messageOpcode;
+        return new string("Error " + messageOpcode);
     } else
-        return "Unexpected Error while reading Error Message recicving message opcode";
+        return new string("Unexpected Error while reading Error Message recicving message opcode");
 
 
 }
