@@ -46,10 +46,27 @@ void TaskReadFromSTDINWriteToSocket::run() {
         else if(toStrings.front()=="FOLLOW"){
             shortToBytes(4,opCodeBytes);
             _connectionHandler.sendBytes(opCodeBytes,2);
-            _connectionHandler.sendBytes(toStrings.at(1).c_str(),1);
-            _connectionHandler.sendFrameAscii(toStrings.at(2).c_str(),toStrings.at(2).size());
-            int numOfUsers = std::stoi(toStrings.at(2));
-            for(int i=0;i<numOfUsers;i++){
+            if(!strcmp(toStrings.at(1).c_str(),"1")){
+                char * byte1 = new char[1];
+                byte1[0] = '\1';
+                _connectionHandler.sendBytes(byte1,1);
+                delete byte1;
+            }
+            else if(!strcmp(toStrings.at(1).c_str(),"0")){
+                char * byte1 = new char[1];
+                byte1[0] = '\0';
+                _connectionHandler.sendBytes(byte1,1);
+                delete byte1;
+            }
+            else{
+                cout << "Error"<<endl;
+            }
+
+            short numOfUsers = std::stoi(toStrings.at(2));
+            char* numOfUsersBytes = new char[2];
+            shortToBytes(numOfUsers,numOfUsersBytes);
+            _connectionHandler.sendBytes(numOfUsersBytes,2);
+            for(short i=0;i<numOfUsers;i++){
                 _connectionHandler.sendFrameAscii(toStrings.at(i+3),'\0');
             }
         }
@@ -68,7 +85,7 @@ void TaskReadFromSTDINWriteToSocket::run() {
             _connectionHandler.sendBytes(opCodeBytes,2);
             _connectionHandler.sendFrameAscii(toStrings.at(1),'\0');
             if(toStrings.size()>2) {
-                for (int i = 2; i < toStrings.size() - 1; i++) {
+                for (int i = 2; i < toStrings.size()-1; i++) {
                     _connectionHandler.sendFrameAscii(toStrings.at(i), ' ');
                 }
                 _connectionHandler.sendFrameAscii(toStrings.at(toStrings.size()-1),'\0');

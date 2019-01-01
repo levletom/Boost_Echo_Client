@@ -81,11 +81,11 @@ std::string* TaskWriteToStdOUTReadFromSocket::createAndProcessNotificationString
 
         }
         len = content.length();
-        postingUser.resize(len - 1);
+        content.resize(len - 1);
         string pmOrPostString;
-        if (pmOrPost[0] == '0')
+        if (pmOrPost[0] == 0)
             pmOrPostString = "PM ";
-        else if (pmOrPost[0] == '1')
+        else if (pmOrPost[0] == 1)
             pmOrPostString = "Public ";
         else
             cout << "unexpected error when deciding if PM or POST" << endl;
@@ -203,7 +203,7 @@ std::string* TaskWriteToStdOUTReadFromSocket::createAndProccessErrorString() {
     bool success = _connectionHandler.getBytes(bytes, 2);
     if (success) {
         messageOpcode = bytesToShort(bytes);
-        return new string("Error " + to_string(messageOpcode));
+        return new string("ERROR " + to_string(messageOpcode));
     } else
         return new string("Unexpected Error while reading Error Message recicving message opcode");
 
