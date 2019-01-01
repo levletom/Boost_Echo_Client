@@ -24,7 +24,7 @@ void TaskWriteToStdOUTReadFromSocket::run() {
         std::lock_guard<std::mutex> lock(_mutex); // constructor locks the mutex while destructor (out of scope) unlocks it
         std::cout << i << ") Task " << _id << " is working" << std::endl;
     }*/
-    while (!terminate) {
+    while (!_connectionHandler.shouldTerminate()) {
         string  *messageToPrint = getNextProccessedMessage();
         if(messageToPrint != nullptr) {
             cout << *messageToPrint << endl;
@@ -40,6 +40,7 @@ std::string* TaskWriteToStdOUTReadFromSocket::getNextProccessedMessage() {
     bool success = _connectionHandler.getBytes(bytes, 2);
     if (success) {
         opcode = bytesToShort(bytes);
+        delete[] bytes;
         switch (opcode) {
             case 9  :
                 return createAndProcessNotificationString();
@@ -89,11 +90,12 @@ std::string* TaskWriteToStdOUTReadFromSocket::createAndProcessNotificationString
             pmOrPostString = "Public ";
         else
             cout << "unexpected error when deciding if PM or POST" << endl;
-
+        delete[]  pmOrPost;
         return new string("NOTIFICATION " + pmOrPostString + postingUser + " " + content);
 
 
     }
+    delete[] pmOrPost;
 }
 
 std::string* TaskWriteToStdOUTReadFromSocket::createAndProcessAckString() {
@@ -102,6 +104,7 @@ std::string* TaskWriteToStdOUTReadFromSocket::createAndProcessAckString() {
     bool success = _connectionHandler.getBytes(bytes, 2);
     if (success) {
         messageOpcode = bytesToShort(bytes);
+        delete[] bytes;
         short numOfUsers;
         char *numOfUsersbytes = new char[2];
         short numPosts;
@@ -112,13 +115,18 @@ std::string* TaskWriteToStdOUTReadFromSocket::createAndProcessAckString() {
         switch (messageOpcode) {
             //register
             case 1  :
+                delete[] numOfUsersbytes;
                 return new string("ACK 1");
                 //login
             case 2:
+                _connectionHandler.setIsLoggedIn(true);
+                delete[] numOfUsersbytes;
                 return new string("ACK 2");
                 //logout
             case 3:
-                terminate = true;
+                _connectionHandler.setShouldTerminate(true);
+                _connectionHandler.setWaitingForLogoutAck(false);
+                delete[] numOfUsersbytes;
                 return new string("ACK 3");
                 //follow/unfollow
             case 4:
@@ -142,12 +150,15 @@ std::string* TaskWriteToStdOUTReadFromSocket::createAndProcessAckString() {
                 for (string name:users) {
                     result += " " + name;
                 }
+                delete[] numOfUsersbytes;
                 return new string(result);
                 //POST
             case 5:
+                delete[] numOfUsersbytes;
                 return new string("ACK 5");
                 //PM
             case 6:
+                delete[] numOfUsersbytes;
                 return new string("ACK 6");
                 //UserList
             case 7:
@@ -155,6 +166,7 @@ std::string* TaskWriteToStdOUTReadFromSocket::createAndProcessAckString() {
                     return new string("unexpected error when reading numOfUsers");
 
                 numOfUsers = bytesToShort(numOfUsersbytes);
+                delete[] numOfUsersbytes;
 
                 for (int i = 0; i < numOfUsers; i++) {
                     string name;
@@ -186,8 +198,10 @@ std::string* TaskWriteToStdOUTReadFromSocket::createAndProcessAckString() {
 
                 numFollowing = bytesToShort(numOfUsersbytes);
                 result = "ACK 8 "+to_string(numPosts)+" "+to_string(numFollowers)+" "+to_string(numFollowing);
+                delete[] numOfUsersbytes;
                 return new string(result);
             default:
+                delete[] numOfUsersbytes;
                 return new string("unexpected Error - recieved ack message without proper message operator 1-8");
 
 
@@ -203,6 +217,8 @@ std::string* TaskWriteToStdOUTReadFromSocket::createAndProccessErrorString() {
     bool success = _connectionHandler.getBytes(bytes, 2);
     if (success) {
         messageOpcode = bytesToShort(bytes);
+        if(messageOpcode==3)
+            _connectionHandler.setWaitingForLogoutAck(false);
         return new string("ERROR " + to_string(messageOpcode));
     } else
         return new string("Unexpected Error while reading Error Message recicving message opcode");

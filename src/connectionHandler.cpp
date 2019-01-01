@@ -1,5 +1,7 @@
 #include "../include/connectionHandler.h"
 #include <boost/asio.hpp>
+#include <connectionHandler.h>
+
 
 using boost::asio::ip::tcp;
 
@@ -9,7 +11,8 @@ using std::cerr;
 using std::endl;
 using std::string;
  
-ConnectionHandler::ConnectionHandler(string host, short port): host_(host), port_(port), io_service_(), socket_(io_service_){}
+ConnectionHandler::ConnectionHandler(string host, short port): host_(host), port_(port), io_service_(), socket_(io_service_),_shouldTerminate(false),_isLoggedIn(
+        false),_waitingForLogoutAck(false){}
     
 ConnectionHandler::~ConnectionHandler() {
     close();
@@ -102,4 +105,29 @@ void ConnectionHandler::close() {
     } catch (...) {
         std::cout << "closing failed: connection already closed" << std::endl;
     }
+}
+
+bool ConnectionHandler::shouldTerminate() {
+    return  _shouldTerminate;
+}
+
+void ConnectionHandler::setShouldTerminate(bool setTo) {
+    _shouldTerminate=setTo;
+
+}
+
+bool ConnectionHandler::isLoggedIn() {
+    return _isLoggedIn;
+}
+
+void ConnectionHandler::setIsLoggedIn(bool seTo) {
+    _isLoggedIn = seTo;
+}
+
+bool ConnectionHandler::watingForLogoutAck() {
+    return _waitingForLogoutAck;
+}
+
+void ConnectionHandler::setWaitingForLogoutAck(bool seTo) {
+    _waitingForLogoutAck = seTo;
 }

@@ -12,7 +12,10 @@ private:
 	const std::string host_;
 	const short port_;
 	boost::asio::io_service io_service_;   // Provides core I/O functionality
-	tcp::socket socket_; 
+	tcp::socket socket_;
+	bool _shouldTerminate;
+	bool _isLoggedIn;
+	bool _waitingForLogoutAck;
  
 public:
     ConnectionHandler(std::string host, short port);
@@ -20,6 +23,12 @@ public:
  
     // Connect to the remote machine
     bool connect();
+    bool shouldTerminate();
+    void setShouldTerminate(bool setTo);
+    bool isLoggedIn();
+    void setIsLoggedIn(bool seTo);
+    bool watingForLogoutAck();
+    void setWaitingForLogoutAck(bool seTo);
  
     // Read a fixed number of bytes from the server - blocking.
     // Returns false in case the connection is closed before bytesToRead bytes can be read.
