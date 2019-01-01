@@ -203,7 +203,7 @@ std::string* TaskWriteToStdOUTReadFromSocket::createAndProccessErrorString() {
     bool success = _connectionHandler.getBytes(bytes, 2);
     if (success) {
         messageOpcode = bytesToShort(bytes);
-        return new string("Error " + messageOpcode);
+        return new string("Error " + to_string(messageOpcode));
     } else
         return new string("Unexpected Error while reading Error Message recicving message opcode");
 
