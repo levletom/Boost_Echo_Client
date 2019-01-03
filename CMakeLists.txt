@@ -11,7 +11,7 @@ find_package(Boost COMPONENTS system filesystem REQUIRED)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}-std=c++11 -pthread -lboost_thread")
 
 
-add_executable(Boost_Echo_Client
+add_executable(BGSclient
         include/connectionHandler.h
         include/TaskReadFromSTDINWriteToSocket.h
         include/TaskWriteToStdOUTReadFromSocket.h
@@ -20,4 +20,4 @@ add_executable(Boost_Echo_Client
         src/TaskReadFromSTDINWriteToSocket.cpp
         src/echoClient.cpp)
 
-target_link_libraries(Boost_Echo_Client ${Boost_LIBRARIES})
+target_link_libraries(BGSclient ${Boost_LIBRARIES})

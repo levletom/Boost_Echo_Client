@@ -21,7 +21,7 @@ void TaskReadFromSTDINWriteToSocket::run() {
     while (!_connectionHandler.shouldTerminate()) {
         const short bufsize = 1024;
         char buf[bufsize];
-        if(!_connectionHandler.watingForLogoutAck()) {
+        if(!_connectionHandler.watingForLogoutAck() && !_connectionHandler.shouldTerminate()) {
             std::cin.getline(buf, bufsize);
             std::string line(buf);
 
