@@ -32,12 +32,22 @@ void TaskReadFromSTDINWriteToSocket::run() {
                 shortToBytes(1, opCodeBytes);
                 _connectionHandler.sendBytes(opCodeBytes, 2);
                 _connectionHandler.sendFrameAscii(toStrings.at(1), '\0');
-                _connectionHandler.sendFrameAscii(toStrings.at(2), '\0');
+                if(toStrings.size()>=3) {
+                    _connectionHandler.sendFrameAscii(toStrings.at(2), '\0');
+                }
+                else{
+                    _connectionHandler.sendFrameAscii("", '\0');
+                }
             } else if (toStrings.front() == "LOGIN") {
                 shortToBytes(2, opCodeBytes);
                 _connectionHandler.sendBytes(opCodeBytes, 2);
                 _connectionHandler.sendFrameAscii(toStrings.at(1), '\0');
-                _connectionHandler.sendFrameAscii(toStrings.at(2), '\0');
+                if(toStrings.size()>=3) {
+                    _connectionHandler.sendFrameAscii(toStrings.at(2), '\0');
+                }
+                else{
+                    _connectionHandler.sendFrameAscii("", '\0');
+                }
             } else if (toStrings.front() == "LOGOUT") {
                 shortToBytes(3, opCodeBytes);
                 if(_connectionHandler.isLoggedIn())
