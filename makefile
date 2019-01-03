@@ -10,7 +10,7 @@ all: BGSClient
 
 # Tool invocations
 # Executable "hello" depends on the files hello.o and run.o.
-BGSclient: bin/connectionHandler.o bin/TaskReadFromSTDINWriteToSocket.o bin/TaskWriteToStdOUTReadFromSocket.o bin/echoClient.o $(LDFLAGS)
+BGSClient: bin/connectionHandler.o bin/TaskReadFromSTDINWriteToSocket.o bin/TaskWriteToStdOUTReadFromSocket.o bin/echoClient.o $(LDFLAGS)
 	@echo 'Building target: hello'
 	@echo 'Invoking: C++ Linker'
 	$(CC) -o bin/BGSClient  bin/connectionHandler.o bin/TaskReadFromSTDINWriteToSocket.o bin/TaskWriteToStdOUTReadFromSocket.o bin/echoClient.o $(LDFLAGS)
