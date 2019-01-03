@@ -96,6 +96,7 @@ std::string* TaskWriteToStdOUTReadFromSocket::createAndProcessNotificationString
 
     }
     delete[] pmOrPost;
+    return nullptr;
 }
 
 std::string* TaskWriteToStdOUTReadFromSocket::createAndProcessAckString() {
@@ -208,7 +209,7 @@ std::string* TaskWriteToStdOUTReadFromSocket::createAndProcessAckString() {
         }
     }
 
-
+return nullptr;
 }
 
 std::string* TaskWriteToStdOUTReadFromSocket::createAndProccessErrorString() {

@@ -6,15 +6,15 @@ CFLAGS  = -g -Wall  -std=c++11
 LDFLAGS = -lboost_system -lpthread
 
 # All Targets
-all: BGSClient
+all: BGSclient
 
 # Tool invocations
 # Executable "hello" depends on the files hello.o and run.o.
-BGSClient: bin/connectionHandler.o bin/TaskReadFromSTDINWriteToSocket.o bin/TaskWriteToStdOUTReadFromSocket.o bin/echoClient.o $(LDFLAGS)
+BGSclient: bin/connectionHandler.o bin/TaskReadFromSTDINWriteToSocket.o bin/TaskWriteToStdOUTReadFromSocket.o bin/echoClient.o $(LDFLAGS)
 	@echo 'Building target: hello'
 	@echo 'Invoking: C++ Linker'
-	$(CC) -o bin/BGSClient  bin/connectionHandler.o bin/TaskReadFromSTDINWriteToSocket.o bin/TaskWriteToStdOUTReadFromSocket.o bin/echoClient.o $(LDFLAGS)
-	@echo 'Finished building target: BGSClient'
+	$(CC) -o bin/BGSclient  bin/connectionHandler.o bin/TaskReadFromSTDINWriteToSocket.o bin/TaskWriteToStdOUTReadFromSocket.o bin/echoClient.o $(LDFLAGS)
+	@echo 'Finished building target: BGSclient'
 	@echo ' '
 
 bin/echoClient.o: src/echoClient.cpp

@@ -83,7 +83,7 @@ void TaskReadFromSTDINWriteToSocket::run() {
                 shortToBytes(5, opCodeBytes);
                 _connectionHandler.sendBytes(opCodeBytes, 2);
                 if (toStrings.size() > 1) {
-                    for (int i = 1; i < toStrings.size() - 1; i++) {
+                    for (int i = 1; i < (int)toStrings.size() - 1; i++) {
                         _connectionHandler.sendFrameAscii(toStrings.at(i), ' ');
                     }
                     _connectionHandler.sendFrameAscii(toStrings.at(toStrings.size() - 1), '\0');
@@ -93,7 +93,7 @@ void TaskReadFromSTDINWriteToSocket::run() {
                 _connectionHandler.sendBytes(opCodeBytes, 2);
                 _connectionHandler.sendFrameAscii(toStrings.at(1), '\0');
                 if (toStrings.size() > 2) {
-                    for (int i = 2; i < toStrings.size() - 1; i++) {
+                    for (int i = 2; i < (int)toStrings.size() - 1; i++) {
                         _connectionHandler.sendFrameAscii(toStrings.at(i), ' ');
                     }
                     _connectionHandler.sendFrameAscii(toStrings.at(toStrings.size() - 1), '\0');
